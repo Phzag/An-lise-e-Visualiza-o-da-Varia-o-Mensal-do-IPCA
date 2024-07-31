@@ -1,0 +1,46 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.express as px
+from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
+
+# Dados do IPCA
+data = {
+    'Mês': ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio'],
+    '2022': [0.54, 1.01, 1.62, 1.06, 0.47],
+    '2023': [0.53, 0.84, 0.71, 0.61, 0.23],
+    '2024': [0.42, 0.83, 0.16, 0.38, 0.46]
+}
+
+df = pd.DataFrame(data)
+
+# Convertendo valores infinitos para NaN (se houver)
+df.replace([np.inf, -np.inf], np.nan, inplace=True)
+
+# Gráfico de Linha
+plt.figure(figsize=(10, 6))
+sns.lineplot(x='Mês', y='value', hue='variable', 
+             data=pd.melt(df, ['Mês']))
+plt.title('Variação Mensal do IPCA')
+plt.xlabel('Mês')
+plt.ylabel('Variação (%)')
+plt.legend(title='Ano')
+plt.grid(True)
+plt.show()
+
+# Gráfico de Barras
+df_melted = df.melt(id_vars=['Mês'], var_name='Ano', value_name='Variação (%)')
+plt.figure(figsize=(10, 6))
+sns.barplot(x='Mês', y='Variação (%)', hue='Ano', data=df_melted)
+plt.title('Variação Mensal do IPCA por Ano')
+plt.xlabel('Mês')
+plt.ylabel('Variação (%)')
+plt.legend(title='Ano')
+plt.grid(True)
+plt.show()
+
+# Gráfico Interativo
+fig = px.line(df_melted, x='Mês', y='Variação (%)', color='Ano', 
+              title='Variação Mensal do IPCA Interativo')
+fig.show()
